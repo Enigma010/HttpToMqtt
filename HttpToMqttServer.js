@@ -7,6 +7,6 @@ module.exports = class HttpToMqttServer{
         this.Config = config;
            
         // Setup the web server and distance sensor
-        this.WebServer = new WebServer(this.Config.Web.ListenOnPort, this.Config.Mqtt);
+        this.WebServer = new WebServer(this.Config.Web.ListenOnPort, this.Config.Mqtt, this.Config.Database);
     }
 }

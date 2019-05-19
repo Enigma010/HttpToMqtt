@@ -7,6 +7,10 @@ module.exports = class Config{
             ListenOnPort: argv.webListenOnPort
         };
 
+        this.Database = {
+            FileName: argv.databaseFileName
+        };
+
         this.Mqtt = {
             Url: argv.mqttUrl
         }
@@ -26,6 +30,10 @@ module.exports = class Config{
 
         if(_.isUndefined(this.Mqtt.Url) || _.isNull(this.Mqtt.Url)){
             this.Mqtt.Url = 'mqtt://localhost:1883';
+        }
+
+        if(_.isUndefined(this.Database.FileName) || _.isNull(this.Database.FileName)){
+            this.Database.FileName = "instance/Database.sqlite";
         }
         // end section of setting defaults
     }
