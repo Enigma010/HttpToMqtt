@@ -69,18 +69,18 @@ module.exports = class HttpToMqttController extends GenericController{
 
             // Figure out what to do with options to be sent to the Mqtt client
             let options = {};
-            if(!_.isUndefined(request.body.options) && !_.isNull(request.body.options)){
-                options = request.options;
+            if(!_.isUndefined(request.body.Options) && !_.isNull(request.body.Options)){
+                options = request.Options;
             }
 
             // Figure out what to do with the value to be sent to the Mqtt client
             let value = '';
-            if(!_.isUndefined(request.body.value) && !_.isNull(request.body.value)){
-                value = request.body.value;
+            if(!_.isUndefined(request.body.Value) && !_.isNull(request.body.Value)){
+                value = request.body.Value;
             }
 
             // Publish to the Mqtt client
-            this.MqttClient.Publish(request.body.topic, value, options);
+            this.MqttClient.Publish(request.body.Topic, value, options);
         }
         catch(error){
             thrownError = error;

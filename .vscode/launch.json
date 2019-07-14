@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}\\index.js",
             "args": [
                 "--mqttUrl",
-                 "'mqtt://192.168.1.15:1883'"
+                 "'mqtt://cns:1883'"
                 ]
         }
     ]
