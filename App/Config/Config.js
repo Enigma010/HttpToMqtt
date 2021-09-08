@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const MqttClient = require('../Mqtt/Client.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = class Config{
     constructor(argv){
@@ -13,7 +14,12 @@ module.exports = class Config{
 
         this.Mqtt = {
             Url: argv.mqttUrl
-        }
+        };
+
+        this.Log = {
+            DirectoryName: argv.logDirectory,
+            LogLevel: argv.logLevel
+        };
 
         // Parse MQTT optional parameters if supplied
         if(!_.isUndefined(argv.mqttOptions)){
@@ -32,9 +38,23 @@ module.exports = class Config{
             this.Mqtt.Url = 'mqtt://localhost:1883';
         }
 
+        let instanceDirectory = 'instance';
+        let defaultDatabaseFileName = path.join(instanceDirectory, 'Database.sqlite');
+        let defaultLogDirectory = path.join(instanceDirectory, 'log');
+
         if(_.isUndefined(this.Database.FileName) || _.isNull(this.Database.FileName)){
-            this.Database.FileName = "instance/Database.sqlite";
+            this.Database.FileName = defaultDatabaseFileName;
         }
+
+        if(_.isUndefined(this.Log.DirectoryName) || _.isNull(this.Log.DirectoryName)){
+            this.Log.DirectoryName = defaultLogDirectory;
+        }
+
+        if (!fs.existsSync(this.Log.DirectoryName)){
+            fs.mkdirSync(this.Log.DirectoryName);
+        }
+
+        this.Log.LogFileName = path.join(this.Log.DirectoryName, 'app.log');
         // end section of setting defaults
     }
 }

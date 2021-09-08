@@ -12,11 +12,12 @@ module.exports = class Server{
 
         // Setup the Web Server
         this.ListenOnPort = listenOnPort;
-        this.Server = express();
-        this.Server.use(bodyParser.json());
-        this.Listener = this.Server.listen(this.ListenOnPort);
+        this.WebServer = express();
+        this.WebServer.use(bodyParser.json());
+        this.Listener = this.WebServer.listen(this.ListenOnPort);
         this.Controllers = [];
         this.DataModels = [];
+        this.Loggers = [];
         this.HttpToMqttConfig = httpToMqttConfig;
         this.DatabaseConfig = databaseConfig;
         this.Database = new Database(this.DatabaseConfig.FileName);
@@ -40,6 +41,6 @@ module.exports = class Server{
 
     SetupControllers(){
         // Setup the controllers
-        this.Controllers['HttpToMqttController'] = new HttpToMqttController(this.Server, this.HttpToMqttConfig, this.DataModels['Presence']);
+        this.Controllers['HttpToMqttController'] = new HttpToMqttController(this, this.HttpToMqttConfig, this.DataModels['Presence']);
     }
 }

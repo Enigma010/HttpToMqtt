@@ -7,12 +7,24 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Run - Debug Logging",
+            "program": "${workspaceFolder}\\index.js",
+            "args": [
+                "--mqttUrl",
+                 "'mqtt://cns:1883'",
+                 "--logLevel",
+                 "debug"
+                ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Run",
             "program": "${workspaceFolder}\\index.js",
             "args": [
                 "--mqttUrl",
                  "'mqtt://cns:1883'"
                 ]
-        }
+        }        
     ]
 }

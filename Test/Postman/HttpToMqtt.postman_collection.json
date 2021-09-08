@@ -1,0 +1,65 @@
+{
+	"info": {
+		"_postman_id": "469e121b-1844-4df9-8ff7-b3bed16deff6",
+		"name": "HttpToMqtt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Publish",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"Topic\": \"foo\",\r\n\"Value\": \"1234\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/Publish",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"Publish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Presence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Topic\": \"PresenceTopicName\",\r\n    \"ExpirationInSeconds\": \"60\",\r\n    \"Heartbeat\": \"true\",\r\n    \"PresentValue\": 1,\r\n    \"AwayValue\": 0\r\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/Presence",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"Presence"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

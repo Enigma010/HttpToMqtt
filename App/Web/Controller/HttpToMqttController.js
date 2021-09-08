@@ -4,6 +4,7 @@ const GenericController = require('./GenericController.js');
 const MqttClient = require('./../../Mqtt/Client');
 const PresenceModel = require('./../../Models/Presence.js');
 const PresencesModel = require('./../../Models/Presences.js');
+const Logger = require('./../../Logger.js');
 
 module.exports = class HttpToMqttController extends GenericController{
     constructor(server, config, presenceDatabase){
@@ -13,7 +14,7 @@ module.exports = class HttpToMqttController extends GenericController{
         this.Setup();
 
         // Setup the Mqtt client
-        this.MqttClient = new MqttClient(config.Url, config.Options);
+        this.MqttClient = new MqttClient(server, config.Url, config.Options);
 
         // Setup the presences model and hook up the Mqtt client to handle updating
         // the presence as present or away
@@ -64,6 +65,7 @@ module.exports = class HttpToMqttController extends GenericController{
     }
 
     Publish(request, response){
+        Logger.Log("app", "debug", "HttpToMqttController::Publish - Begin", request.body);
         let thrownError = null;
         try{
 
@@ -83,14 +85,17 @@ module.exports = class HttpToMqttController extends GenericController{
             this.MqttClient.Publish(request.body.Topic, value, options);
         }
         catch(error){
+            Logger.Log("app", "error", "HttpToMqttController::Publish - Error", error);
             thrownError = error;
         }
 
         // Send the response back to the requestor
         this.SendResponseFunc(response)(thrownError, {});
+        Logger.Log("app", "debug", "HttpToMqttController::Publish - End");
     }
 
     Presence(request, response){
+        Logger.Log("app", "debug", "HttpToMqttController::Presence - Begin", request.body);
         let thrownError = null;
         try{
 
@@ -109,11 +114,13 @@ module.exports = class HttpToMqttController extends GenericController{
             this.Presences.Add(presence);
         }
         catch(error){
+            Logger.Log("app", "error", "HttpToMqttController::Presence - Error", error);
             thrownError = error;
         }
 
         // Send the distance back to the requestor
         this.SendResponseFunc(response)(thrownError, {});
+        Logger.Log("app", "debug", "HttpToMqttController::Presence - End");
     }
 
     Setup(){
