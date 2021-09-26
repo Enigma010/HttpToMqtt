@@ -27,13 +27,11 @@ module.exports = class Presences{
         });
 
         // The variable added will signify that we need to publish again
-        let update = false;
         if(!foundPresence){
             Logger.Log("app", "debug", "Presences::Add - No Presence Found", {foundPresence: foundPresence});
             // We didn't find a presence add it to the list and mark it for publish
             foundPresence = presence;
             this.Presences.push(foundPresence);
-            update = true;
             Logger.Log("app", "debug", "Presences::Add - Added presence");
         }
         else{
@@ -42,7 +40,6 @@ module.exports = class Presences{
 
                 // We found the topic but the present value isn't what we have
                 // do another publish, or if the presence is told to heartbeat
-                update = true;
                 Logger.Log("app", "debug", "Presences::Add - Force update presence");
             }
 
@@ -54,7 +51,7 @@ module.exports = class Presences{
             }
         }
 
-        if(update && (!_.isUndefined(this.PresentHandler) && (typeof this.PresentHandler == 'function'))){
+        if(!_.isUndefined(this.PresentHandler) && (typeof this.PresentHandler == 'function')){
             Logger.Log("app", "debug", "Presences::Add - Present");
             // The presence was added or changed and there is a handler function to call when the
             // presence value changes so invoke it now
