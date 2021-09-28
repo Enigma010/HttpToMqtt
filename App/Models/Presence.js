@@ -18,6 +18,7 @@ module.exports = class Presence{
         this.AwayValue = presence.AwayValue;
         this.ExpirationInSeconds = presence.ExpirationInSeconds;
         this.HeartBeat = presence.HeartBeat;
+        this.LastTransmitTime = presence.LastTransmitTime;
         
         // Update the last heart beat time to now
         this.LastHeartBeatTime = new Date();
@@ -38,6 +39,9 @@ module.exports = class Presence{
         }
         if(_.isUndefined(this.ExpirationInSeconds) || _.isNull(this.ExpirationInSeconds) || this.ExpirationInSeconds < 1){
             this.ExpirationInSeconds = 60;
+        }
+        if(_.isUndefined(this.LastTransmitTime) || _.isNull(this.LastTransmitTime)){
+            this.LastTransmitTime = new Date();
         }
         Logger.Log("app", "debug", "Presence::SetDefaults - End", {this: this});
     }

@@ -46,11 +46,11 @@ module.exports = class Presences{
             // Update all the properties on the found presence so if it has changed
             // values since the first publish that we have the most recent version
             foundPresence.Update(presence);
-            if(!_.isUndefined(this.UpdateHandler) && (typeof this.UpdateHandler == 'function')){
-                this.UpdateHandler(foundPresence);
-            }
-        }
 
+        }
+        if(!_.isUndefined(this.UpdateHandler) && (typeof this.UpdateHandler == 'function')){
+            this.UpdateHandler(foundPresence);
+        }
         if(!_.isUndefined(this.PresentHandler) && (typeof this.PresentHandler == 'function')){
             Logger.Log("app", "debug", "Presences::Add - Present");
             // The presence was added or changed and there is a handler function to call when the
@@ -75,20 +75,44 @@ module.exports = class Presences{
         Logger.Log("app", "debug", "Presences::Delete - End");
     }
 
-    CheckExpiration(){
+    GetExpiring(){
         let now = Date.now();
         let expiring = [];
-
         _.forEach(this.Presences, function(checkPresence){
-            
+            let expired = Math.round((now - checkPresence.LastHeartBeatTime) / 1000) > checkPresence.ExpirationInSeconds;
             // Subtract the last heart beat time with the current time and see if it's greater than the expiration in seconds
-            if(Math.round((now - checkPresence.LastHeartBeatTime) / 1000) > checkPresence.ExpirationInSeconds){
-                Logger.Log("app", "debug", "Presences::CheckExpiration - Found Expiring", checkPresence);
+            if(expired){
+                Logger.Log("app", "debug", "Presences::GetExpiring - Found Expiring", checkPresence);
                 // The presence has expired add it to the list to remove
                 expiring.push(checkPresence);
+                checkPresence.LastTransmitTime = new Date();
             }
         });
+        return expiring
+    }
 
+    GetExpiringOrExpired(){
+        let now = Date.now();
+        let expiring = [];
+        _.forEach(this.Presences, function(checkPresence){
+            let expired = 
+            Math.round((now - checkPresence.LastHeartBeatTime) / 1000) > checkPresence.ExpirationInSeconds &&
+            Math.round((now - checkPresence.LastTransmitTime) / 1000) > checkPresence.ExpirationInSeconds;
+
+            // Subtract the last heart beat time with the current time and see if it's greater than the expiration in seconds
+            if(expired){
+                Logger.Log("app", "debug", "Presences::GetExpiringOrExpired - Found Expiring/expired", checkPresence);
+                // The presence has expired add it to the list to remove
+                expiring.push(checkPresence);
+                checkPresence.LastTransmitTime = new Date();
+            }
+        });
+        return expiring
+    }
+
+    CheckExpiration(){
+        let now = Date.now();
+        let expiring = this.GetExpiringOrExpired();
         _.forEach(expiring, _.bind(function(expired){
             
             // Check to see if we have an away handler and it's the appropriate type
@@ -97,9 +121,28 @@ module.exports = class Presences{
                 // Invoke the away handler for the expired presence
                 this.AwayHandler(expired);
             }
-            // Delete the expired presence from the internal store
-            Logger.Log("app", "debug", "Presences::CheckExpiration - Delete Expired", expired);
-            this.Delete(expired);
+            if(!_.isUndefined(this.UpdateHandler) && (typeof this.UpdateHandler == 'function')){
+                Logger.Log("app", "debug", "Presences::CheckExpiration - Updating Expired", expired);
+                this.UpdateHandler(expired);
+            }
+        }, this));
+    }
+
+    DeleteExpiring(){
+        let now = Date.now();
+        let expiring = this.GetExpiring();
+        _.forEach(expiring, _.bind(function(expiring){
+            
+            // Check to see if we have an away handler and it's the appropriate type
+            if(!_.isUndefined(this.AwayHandler) && typeof this.AwayHandler == 'function'){
+                Logger.Log("app", "debug", "Presences::CheckExpiration - Handle Expiring", expiring);
+                // Invoke the away handler for the expired presence
+                this.AwayHandler(expiring);
+            }
+            if(!_.isUndefined(this.DeleteHandler) && (typeof this.DeleteHandler == 'function')){
+                Logger.Log("app", "debug", "Presences::CheckExpiration - Deleted Expiring", expiring);
+                this.Delete(expiring);
+            }
         }, this));
     }
 }

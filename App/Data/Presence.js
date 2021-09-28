@@ -8,11 +8,11 @@ module.exports = class Presence extends Generic{
     constructor(database){
         super(database, 
             {
-                Create: 'insert into Presences (Id, Topic, PresentValue, AwayValue, LastHeartBeatTime, ExpirationInSeconds, CurrentPresenceValue) values ($Id, $Topic, $PresentValue, $AwayValue, $LastHeartBeatTime, $ExpirationInSeconds, $CurrentPresenceValue)',
+                Create: 'insert into Presences (Id, Topic, PresentValue, AwayValue, LastHeartBeatTime, ExpirationInSeconds, CurrentPresenceValue, LastTransmitTime) values ($Id, $Topic, $PresentValue, $AwayValue, $LastHeartBeatTime, $ExpirationInSeconds, $CurrentPresenceValue, $LastTransmitTime)',
                 Read: 'select * from Presences where Id = $Id',
-                Update: 'update Presences set Topic = $Topic, PresentValue = $PresentValue, AwayValue = $AwayValue, LastHeartBeatTime = $LastHeartBeatTime, ExpirationInSeconds = $ExpirationInSeconds, CurrentPresenceValue = $CurrentPresenceValue where Id = $Id',
+                Update: 'update Presences set Topic = $Topic, PresentValue = $PresentValue, AwayValue = $AwayValue, LastHeartBeatTime = $LastHeartBeatTime, ExpirationInSeconds = $ExpirationInSeconds, CurrentPresenceValue = $CurrentPresenceValue, LastTransmitTime = $LastTransmitTime where Id = $Id',
                 Delete: 'delete from Presences where Id = $Id',
-                Setup: 'create table if not exists Presences (Id text not null, Topic text, PresentValue text, AwayValue text, LastHeartBeatTime text, ExpirationInSeconds int, CurrentPresenceValue text, primary key (Id))'
+                Setup: 'create table if not exists Presences (Id text not null, Topic text, PresentValue text, AwayValue text, LastHeartBeatTime text, ExpirationInSeconds int, CurrentPresenceValue text, LastTransmitTime text, primary key (Id))'
             }
         );
     }
@@ -36,6 +36,7 @@ module.exports = class Presence extends Generic{
                 var presence = new PresenceModel();
                 _.merge(presence, presenceData);
                 presence.LastHeartBeatTime = new Date(parseFloat(presence.LastHeartBeatTime));
+                presence.LastTransmitTime = new Date(parseFloat(presence.LastTransmitTime));
                 presences.push(presence);
             });
             callback(error, presences);

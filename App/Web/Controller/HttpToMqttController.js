@@ -123,6 +123,22 @@ module.exports = class HttpToMqttController extends GenericController{
         Logger.Log("app", "debug", "HttpToMqttController::Presence - End");
     }
 
+    DeleteExpiredPresences(request, response){
+        Logger.Log("app", "debug", "HttpToMqttController::DeleteExpiredPresences - Begin", request.body);
+        let thrownError = null;
+        try{
+            this.Presences.DeleteExpiring();
+        }
+        catch(error){
+            Logger.Log("app", "error", "HttpToMqttController::DeleteExpiredPresences - Error", error);
+            thrownError = error;
+        }
+
+        // Send the distance back to the requestor
+        this.SendResponseFunc(response)(thrownError, {});
+        Logger.Log("app", "debug", "HttpToMqttController::DeleteExpiredPresences - End");
+    }
+
     Setup(){
         
         // Setup the route to read from the distance sensor
@@ -130,5 +146,8 @@ module.exports = class HttpToMqttController extends GenericController{
 
         // Setup the route to read from the distance sensor
         this.SetupHandleRequest('/Presence', _.bind(this.Presence, this), 'POST');
+
+        // Setup the route to read from the distance sensor
+        this.SetupHandleRequest('/DeleteExpiredPresences', _.bind(this.DeleteExpiredPresences, this), 'POST');
     }
 }
