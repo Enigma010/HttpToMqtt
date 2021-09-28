@@ -18,7 +18,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\"Topic\": \"foo\",\r\n\"Value\": \"1234\"\r\n}"
+					"raw": "{\r\n\"Topic\": \"PublishTopicName\",\r\n\"Value\": \"1234\"\r\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/Publish",
@@ -35,6 +35,34 @@
 		},
 		{
 			"name": "Presence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Topic\": \"PresenceTopicName\",\r\n    \"ExpirationInSeconds\": \"60\",\r\n    \"Heartbeat\": \"true\",\r\n    \"PresentValue\": 1,\r\n    \"AwayValue\": 0\r\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/Presence",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"Presence"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteExpiredPresences",
 			"request": {
 				"method": "POST",
 				"header": [
